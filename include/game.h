@@ -7,13 +7,6 @@
 
 #include "grid.h"
 
-#define WIDTH 512
-#define HEIGHT 512
-
-#define CELL_W (WIDTH / COLS)
-#define CELL_H (HEIGHT / ROWS)
-
-#define UPDATE_FREQ 10
 
 void setup();
 void draw(double dt);

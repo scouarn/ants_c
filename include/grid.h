@@ -1,12 +1,10 @@
 #ifndef _GRID_H_
 #define _GRID_H_
 
-#define ROWS 32
-#define COLS 32
 
 #include "ant.h"
 #include "phero.h"
-
+#include "params.h"
 
 typedef enum {
 	CELL_GROUND,
@@ -27,12 +25,9 @@ typedef struct {
 
 extern Cell grid[ROWS][COLS];
 
-/* POST : set every pheromone in the grid to 0 */
-/* MOD : grid */
-void grid_init();
 
 /* POST : true if and only if x,y is a valid position an ant can go */
-int pos_valid(unsigned int x, unsigned int y);
+int pos_valid(int x, int y);
 
 
 

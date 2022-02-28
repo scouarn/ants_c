@@ -7,8 +7,14 @@
 #include <stdbool.h>
 
 #include "game.h"
-#include "ant.h"
-#include "grid.h"
+#include "sim.h"
+
+
+#define WIDTH 512
+#define HEIGHT 512
+
+#define CELL_W (WIDTH / COLS)
+#define CELL_H (HEIGHT / ROWS)
 
 
 
@@ -20,6 +26,7 @@ void* sim_thread(void* arg);
 bool do_show_grid;
 bool do_show_ants;
 bool do_show_phero;
+bool do_show_terrain;
 
 
 void setup() {
@@ -31,16 +38,13 @@ void setup() {
 	EZ_draw2D_setBlendMode(ALPHA_FAST);
 
 	srand(clock());
+	// srand(10);
 
 	do_show_grid = false;
 	do_show_ants = true;
 	do_show_phero = false;
 
-	grid_init();
-
-	for (int i = 0; i < 10; i++)
-		ant_spawn(COLS/2, ROWS/2);
-
+	sim_init();
 	pthread_create(&sim_thread_id, NULL, sim_thread, NULL);
 
 }
@@ -64,7 +68,6 @@ void draw(double dt) {
 
 		Ant* ant = grid[i][j].ant;
 		if (do_show_ants && ant) {
-
 			EZ_draw2D_line (canvas, EZ_WHITE, 
 				ant->x * CELL_W, 
 				ant->y * CELL_H, 

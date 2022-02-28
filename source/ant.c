@@ -12,7 +12,7 @@
 Ant* ant_list = NULL;
 
 
-void ant_spawn(unsigned int x, unsigned int y) {
+void ant_spawn(int x, int y) {
 
 	Ant* ant = malloc( sizeof(Ant) );
 
@@ -28,6 +28,10 @@ void ant_spawn(unsigned int x, unsigned int y) {
 	if (ant_list) ant_list->prev = ant;
 
 	ant_list = ant;
+
+
+	if (pos_valid(x, y) && grid[x][y].ant == NULL)
+		grid[x][y].ant = ant;
 }
 
 
@@ -50,13 +54,25 @@ void ant_remove(Ant* ant) {
 
 
 void ant_update(Ant* ant) {
-	ERR_assert(ant->x < COLS && ant->y < ROWS, "Ant wandered out of the grid !");
+	ERR_assertw(ant->x < COLS && ant->y < ROWS, "Ant wandered out of the grid !");
 
 
 	Ant_action* action = ant_current(ant);
 
 	if (action != NULL) action(ant);
 
+}
+
+void ant_move(Ant* ant, int x, int y) {
+
+	if (!pos_valid(x, y)) return;
+
+	grid[ant->x][ant->y].ant = NULL;
+
+	ant->x = x;
+	ant->y = y;
+
+	grid[ant->x][ant->y].ant = ant;
 }
 
 
@@ -100,41 +116,11 @@ void ant_random_walk(Ant* ant) {
 	int dx = randint(-1, 1);
 	int dy = randint(-1, 1);
 
-	unsigned int x = ant->x + dx;
-	unsigned int y = ant->y + dy;
+	int x = ant->x + dx;
+	int y = ant->y + dy;
 
-	if ((dx == 0 && dy == 0) /* staying in place is valid */
-	 ||	pos_valid(x, y)) {
-		ant->x += dx;
-		ant->y += dy;
-		return;
-	}
+	ant_move(ant, x, y);
 
 }
-
-
-
-
-void ant_action_dead(Ant* ant) {
-
-}
-
-void ant_action_wander(Ant* ant) {
-	ant_random_walk(ant);
-}
-
-void ant_action_eat(Ant* ant) {
-
-}
-
-void ant_action_attack(Ant* ant) {
-
-}
-
-void ant_action_follow(Ant* ant) {
-
-}
-
-
 
 

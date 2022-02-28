@@ -1,8 +1,29 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <ezGfx/ezErr.h>
 
 #include "grid.h"
 #include "ant.h"
 #include "phero.h"
+
+
+
+void sim_init() {
+
+
+	for (int i = 0; i < COLS; i++)
+	for (int j = 0; j < ROWS; j++) {
+
+		phero_init(&grid[i][j].food);
+		phero_init(&grid[i][j].home);
+		phero_init(&grid[i][j].warn);
+	}
+
+
+	for (int i = 0; i < STARTING_ANTS; i++)
+		ant_spawn(COLS/2, ROWS/2);
+
+}
 
 
 void sim_update() {
@@ -32,24 +53,20 @@ void sim_update() {
 
 	}
 
-	/* disperse and reset ant */
+	/* update pheromones */
 	for (int i = 0; i < COLS; i++)
 	for (int j = 0; j < ROWS; j++) {
-
-		grid[i][j].ant = NULL;
-
 		phero_update(&grid[i][j].food);
 		phero_update(&grid[i][j].home);
 		phero_update(&grid[i][j].warn);
-		phero_update(&grid[i][j].warn);
-
 	}
 
-		
+	/* update ants */
 	for (Ant* ant = ant_list; ant != NULL; ant = ant->next) {
-		grid[ant->x][ant->y].ant = ant;
+		ERR_assertw(grid[ant->x][ant->y].ant == ant, "Ant overlap !");
 		ant_update(ant);
 	}
-	
+
+
 }
 
